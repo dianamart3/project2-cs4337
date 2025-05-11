@@ -39,3 +39,21 @@ find_exit(Map, Actions) :-
         is_exit(Map, FinalCoord)
     ).
 
+dfs(Map, Coord, Visited, PathSoFar, Path) :-
+    \+ member(Coord, Visited),
+    (
+        is_exit(Map, Coord) ->
+            reverse(PathSoFar, Path)
+    ;
+        move(Coord, Dir, NewCoord),
+        NewCoord = coord(R,C),
+        valid_cell(Map, R, C),
+        dfs(Map, NewCoord, [Coord|Visited], [Dir|PathSoFar], Path)
+    ).
+dfs(Map, Coord, Visited, PathSoFar, Path) :-
+    \+ member(Coord, Visited),
+    member(Dir, [up, down, left, right]),
+    move(Coord, Dir, NewCoord),
+    NewCoord = coord(R,C),
+    valid_cell(Map, R, C),
+    dfs(Map, NewCoord, [Coord|Visited], [Dir|PathSoFar], Path).
