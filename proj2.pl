@@ -22,3 +22,20 @@ simulate(Map, Coord, [Dir|Rest], FinalCoord) :-
     NewCoord = coord(R,C),
     valid_cell(Map, R, C),
     simulate(Map, NewCoord, Rest, FinalCoord).
+
+is_exit(Map, coord(R,C)) :-
+    get(Map, R, C, e).
+
+% Main predicate: find_exit(+Map, ?Actions)
+find_exit(Map, Actions) :-
+    find_position(Map, s, StartRow, StartCol),
+    Coord = coord(StartRow, StartCol),
+    (
+        var(Actions) ->
+            % Search mode: generate a valid path
+            dfs(Map, Coord, [], [], Actions);
+        % Validation mode: check path correctness
+        simulate(Map, Coord, Actions, FinalCoord),
+        is_exit(Map, FinalCoord)
+    ).
+
